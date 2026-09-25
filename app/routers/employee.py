@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter
 
 from app.database import mysqldbaccess
-from app.models.employee import Employee, EmployeeCreate, EmployeeUpdate
+from app.models.employee import Employee, EmployeeCreate, EmployeeUpdate, EmployeeWithDetails
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
 
@@ -11,6 +11,16 @@ router = APIRouter(prefix="/employees", tags=["Employees"])
 @router.get("/", response_model=List[Employee])
 def get_employees():
     return mysqldbaccess.fetch_all("SELECT * FROM employee")
+
+
+@router.get("/details", response_model=List[EmployeeWithDetails])
+def get_employees_with_details():
+    return mysqldbaccess.fetch_all(
+        "SELECT e.*, s.statename, ed.education AS educationname "
+        "FROM employee e "
+        "INNER JOIN states s ON e.state = s.stateid "
+        "INNER JOIN education ed ON e.education = ed.eduId"
+    )
 
 
 @router.get("/{EmpId}", response_model=Employee)

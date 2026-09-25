@@ -25,3 +25,8 @@ class EmployeeUpdate(EmployeeBase):
 
 class Employee(EmployeeBase):
     EmpId: int
+
+
+class EmployeeWithDetails(Employee):
+    statename: str
+    educationname: str
