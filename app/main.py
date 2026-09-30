@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from mysql.connector import Error as MySQLError
 
+from app.database import mysqldbaccess
 from app.logging_config import logger
 from app.middleware import RequestLoggingMiddleware
+from app.models.user import AuthRequest
 from app.routers import education, employee, states, users
 
 app = FastAPI(title="HDFC Bank API")
@@ -39,3 +41,12 @@ async def generic_exception_handler(request: Request, exc: Exception):
 @app.get("/")
 def root():
     return {"message": "HDFC Bank API is running"}
+
+
+@app.post("/authenticateuser")
+def authenticate_user(credentials: AuthRequest):
+    user = mysqldbaccess.fetch_one(
+        "SELECT userId FROM users WHERE username = %s AND password = %s",
+        (credentials.username, credentials.password),
+    )
+    return user is not None

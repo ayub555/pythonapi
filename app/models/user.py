@@ -25,3 +25,8 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     userId: int
+
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
